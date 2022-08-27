@@ -1,0 +1,48 @@
+#after finishing the work run the file then go to your browser and in the url section right localhost and the port number to start verifing through wordpress 
+version: "3"
+services: 
+
+#Database layer for wordpress (MYSQL)
+  mysql_db: 
+  image: "mysql:5.7"
+  restart: always
+    environment: 
+      MYSQL_DATABASE: wp_db
+      MYSQL_PASSWORD: abc123
+      MYSQL_ROOT_PASSWORD: abc123
+      MYSQL_USER: wp_user
+  volumes: 
+      - mysql:/var/lib/mysql
+
+#wordpress for apache
+  wordpress: 
+    depends_on: 
+      - mysql_db
+    image: "wordpress:latest"
+    restart: always
+    ports: 
+      - 8000:80
+    environment: 
+      WORDPRESS_DB_HOST: "mysql_db:3306"
+      WORDPRESS_DB_NAME: wp_db
+      WORDPRESS_DB_PASSWORD: abc123
+      WORDPRESS_DB_USER: wp_user
+    volumes: 
+      - "./:/var/www/html"
+
+  #for viewing the database we can use the phpmyadmin tool     
+  #phpmyadmin: 
+  #  depends_on: 
+  #    - mysql_db
+  #  environment: 
+  #    MYSQL_ROOT_PASSWORD: abc123
+  #    PMA_HOST: mysql_db
+  #  image: phpmyadmin/phpmyadmin
+  #  ports: 
+  #    - "3333:80"
+  #  restart: always
+  #  volumes: 
+  #    - "./:/var/www/html/phpmyadmin"
+
+volumes: 
+  mysql: {}
